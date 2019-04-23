@@ -6,8 +6,6 @@ jenkins_port           ?= 8080
 jenkins_prefix         ?= /jenkins
 jenkins_url            := http://$(jenkins_listen_address):$(jenkins_port)$(jenkins_prefix)
 jenkins_home           ?= $(CURDIR)/jenkins_home
-admin_password_file    := $(jenkins_home)/secrets/initialAdminPassword
-jenkins_cli_auth       ?= admin:$(shell cat $(admin_password_file))
 
 jenkins.war:
 	curl -L -o jenkins.war http://mirrors.jenkins.io/war-stable/$(jenkins_version)/jenkins.war
@@ -17,10 +15,11 @@ validate-war: jenkins.war
 	test `sha256sum jenkins.war | cut -d ' ' -f 1` = $(jenkins_war_sha256)
 
 .PHONY: run
+## make jenkins_user=admin jenkins_password=password run
 run: validate-war
 	mkdir -p $(jenkins_home)
-	# TODO: skip setup wizard -Djenkins.install.runSetupWizard=false
-	env JENKINS_HOME=$(jenkins_home) JENKINS_USER=$(jenkins_user) JENKINS_PASSWD=$(jenkins_passwd) java -jar jenkins.war --httpPort=$(jenkins_port) --httpListenAddress=$(jenkins_listen_address) --prefix=$(jenkins_prefix)
+	cp init.groovy $(jenkins_home)
+	env JENKINS_HOME=$(jenkins_home) JENKINS_URL=$(jenkins_url) JENKINS_USER=$(jenkins_user) JENKINS_PASSWORD=$(jenkins_password) java -Djenkins.install.runSetupWizard=false -jar jenkins.war --httpPort=$(jenkins_port) --httpListenAddress=$(jenkins_listen_address) --prefix=$(jenkins_prefix)
 
 .PHONY: show-passwd
 show-passwd:
