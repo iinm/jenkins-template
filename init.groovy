@@ -1,3 +1,4 @@
+// https://wiki.jenkins.io/plugins/servlet/mobile?contentId=38142057#content/view/70877247
 import jenkins.model.*
 import hudson.security.*
 import hudson.security.csrf.*
