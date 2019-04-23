@@ -3,7 +3,6 @@ jenkins_war_sha256     ?= c851b603e3d320295eed671fde7c661209645c818da9b7564caee8
 jenkins_cli_sha256     ?= 6d510758708da16d4fb6392039a76686ffc84db73e57832b2ddc3b64e5995152
 
 jenkins_home           ?= $(CURDIR)/jenkins_home
-
 jenkins_listen_address ?= 127.0.0.1
 jenkins_port           ?= 8080
 jenkins_prefix         ?= /jenkins
@@ -12,6 +11,8 @@ jenkins_url            ?= http://$(jenkins_listen_address):$(jenkins_port)$(jenk
 jenkins_user           ?= jenkins
 jenkins_password       ?= password
 jenkins_cli_auth       ?= $(jenkins_user):$(jenkins_password)
+
+jenkins_plugin_file    ?= $(CURDIR)/plugins.txt
 
 jenkins.war:
 	curl -L -o jenkins.war http://mirrors.jenkins.io/war-stable/$(jenkins_version)/jenkins.war
@@ -53,7 +54,7 @@ safe-restart: validate-cli-jar
 
 .PHONY: install-plugins
 install-plugins: validate-cli-jar
-	@for p in `cat plugins.txt`; do \
+	@for p in `cat $(jenkins_plugin_file)`; do \
 	  java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) install-plugin $$p -deploy; \
 	done
 
