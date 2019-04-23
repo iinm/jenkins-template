@@ -7,11 +7,11 @@ jenkins_home           ?= $(CURDIR)/jenkins_home
 jenkins_listen_address ?= 127.0.0.1
 jenkins_port           ?= 8080
 jenkins_prefix         ?= /jenkins
-jenkins_url            := http://$(jenkins_listen_address):$(jenkins_port)$(jenkins_prefix)
+jenkins_url            ?= http://$(jenkins_listen_address):$(jenkins_port)$(jenkins_prefix)
 
 jenkins_user           ?= jenkins
 jenkins_password       ?= password
-jenkins_cli_auth       := $(jenkins_user):$(jenkins_password)
+jenkins_cli_auth       ?= $(jenkins_user):$(jenkins_password)
 
 jenkins.war:
 	curl -L -o jenkins.war http://mirrors.jenkins.io/war-stable/$(jenkins_version)/jenkins.war
