@@ -15,7 +15,7 @@ urlConfig.save()
 if (!(jenkins.getSecurityRealm() instanceof HudsonPrivateSecurityRealm)) {
     jenkins.setSecurityRealm(new HudsonPrivateSecurityRealm(false))
 }
-def user = jenkins.getSecurityRealm().createAccount(env.JENKINS_USER as String, env.JENKINS_PASSWORD as String)
+def user = jenkins.getSecurityRealm().createAccount(env.JENKINS_USER, env.JENKINS_PASSWORD)
 user.save()
 
 // configure security
