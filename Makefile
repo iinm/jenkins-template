@@ -8,7 +8,7 @@ jenkins_prefix         ?= /jenkins
 jenkins_url            ?= http://$(jenkins_listen_address):$(jenkins_port)$(jenkins_prefix)
 
 jenkins_user           ?= jenkins
-jenkins_password       ?= password
+jenkins_password       ?= $(shell openssl rand -base64 32)
 jenkins_cli_auth       ?= $(jenkins_user):$(jenkins_password)
 
 jenkins_plugin_file    ?= $(CURDIR)/plugins.txt
@@ -31,10 +31,6 @@ run: validate-war
 	  JENKINS_PASSWORD=$(jenkins_password) \
 	  java -Djenkins.install.runSetupWizard=false -jar jenkins.war \
 	    --httpPort=$(jenkins_port) --httpListenAddress=$(jenkins_listen_address) --prefix=$(jenkins_prefix)
-
-.PHONY: show-passwd
-show-passwd:
-	@cat $(admin_password_file)
 
 jenkins-cli.jar:
 	curl -o jenkins-cli.jar $(jenkins_url)/jnlpJars/jenkins-cli.jar
