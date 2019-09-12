@@ -1,6 +1,7 @@
 .DEFAULT_GOAL := help
 
 version        := 2.176.3
+war_url        := http://mirrors.jenkins.io/war-stable/$(version)/jenkins.war
 war_sha256     := 9406c7bee2bc473f77191ace951993f89922f927a0cd7efb658a4247d67b9aa3
 
 jenkins_home   ?= $(CURDIR)/jenkins_home
@@ -18,7 +19,7 @@ cli_jar        ?= ./jenkins-cli.jar
 plugin_list    ?= $(CURDIR)/plugins.txt
 
 $(jenkins_war):
-	curl -L -o $(jenkins_war) http://mirrors.jenkins.io/war-stable/$(version)/jenkins.war
+	curl -L -o $(jenkins_war) $(war_url)
 
 .PHONY: validate-war
 validate-war: $(jenkins_war)
