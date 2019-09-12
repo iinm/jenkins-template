@@ -1,7 +1,8 @@
 // https://wiki.jenkins.io/plugins/servlet/mobile?contentId=38142057#content/view/70877247
-import jenkins.model.*
 import hudson.security.*
 import hudson.security.csrf.*
+import jenkins.model.*
+import jenkins.security.s2m.*
 
 def env = System.getenv()
 def jenkins = Jenkins.getInstance()
@@ -28,7 +29,7 @@ if (jenkins.getCrumbIssuer() == null) {
     jenkins.setCrumbIssuer(new DefaultCrumbIssuer(true))
 }
 
-// disable cli
-jenkins.getDescriptor("jenkins.CLI").get().setEnabled(false)
+// https://wiki.jenkins.io/display/JENKINS/Slave+To+Master+Access+Control
+jenkins.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false)
 
 jenkins.save()

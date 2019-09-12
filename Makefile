@@ -1,6 +1,5 @@
-jenkins_version        ?= 2.164.2
-jenkins_war_sha256     ?= c851b603e3d320295eed671fde7c661209645c818da9b7564caee8371e52bede
-jenkins_cli_sha256     ?= 6d510758708da16d4fb6392039a76686ffc84db73e57832b2ddc3b64e5995152
+jenkins_version        ?= 2.176.3
+jenkins_war_sha256     ?= 9406c7bee2bc473f77191ace951993f89922f927a0cd7efb658a4247d67b9aa3
 
 jenkins_home           ?= $(CURDIR)/jenkins_home
 jenkins_listen_address ?= 127.0.0.1
@@ -40,29 +39,25 @@ show-passwd:
 jenkins-cli.jar:
 	curl -o jenkins-cli.jar $(jenkins_url)/jnlpJars/jenkins-cli.jar
 
-.PHONY: validate-cli-jar
-validate-cli-jar: jenkins-cli.jar
-	test `sha256sum jenkins-cli.jar | cut -d ' ' -f 1` = $(jenkins_cli_sha256)
-
 .PHONY: reload
-reload: validate-cli-jar
+reload: jenkins-cli.jar
 	@java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) reload-configuration
 
 .PHONY: safe-restart
-safe-restart: validate-cli-jar
+safe-restart: jenkins-cli.jar
 	@java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) safe-restart
 
 .PHONY: install-plugins
-install-plugins: validate-cli-jar
+install-plugins: jenkins-cli.jar
 	@for p in `cat $(jenkins_plugin_file)`; do \
 	  java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) install-plugin $$p -deploy; \
 	done
 
 .PHONY: add-user
-add-user: validate-cli-jar
+add-user: jenkins-cli.jar
 	@echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("$(username)", "$(password)")' \
 	  | java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) -noKeyAuth groovy = –
 
 .PHONY: cli-help
-cli-help: validate-cli-jar
+cli-help: jenkins-cli.jar
 	java -jar jenkins-cli.jar -s $(jenkins_url) -auth $(jenkins_cli_auth) help
