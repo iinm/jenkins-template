@@ -1,2 +1,3 @@
 matrix-auth
 git
+simple-theme-plugin
