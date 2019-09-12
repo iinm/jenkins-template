@@ -9,14 +9,14 @@ def jenkins = Jenkins.getInstance()
 
 // set url
 urlConfig = JenkinsLocationConfiguration.get()
-urlConfig.setUrl(env.JENKINS_URL)
+urlConfig.setUrl(env.URL)
 urlConfig.save()
 
 // create admin user
 if (!(jenkins.getSecurityRealm() instanceof HudsonPrivateSecurityRealm)) {
     jenkins.setSecurityRealm(new HudsonPrivateSecurityRealm(false))
 }
-def user = jenkins.getSecurityRealm().createAccount(env.JENKINS_USER, env.JENKINS_PASSWORD)
+def user = jenkins.getSecurityRealm().createAccount(env.USER, env.PASSWORD)
 user.save()
 
 // configure security
