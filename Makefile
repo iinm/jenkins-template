@@ -66,7 +66,7 @@ add-user: $(cli_jar)
 .PHONY: cli-help
 ## cli-help : show jenkins-cli help
 cli-help: $(cli_jar)
-	java -jar $(cli_jar) -s $(url) -auth $(cli_auth) help
+	@java -jar $(cli_jar) -s $(url) -auth $(cli_auth) help
 
 .PHONY: help
 ## help : show help
