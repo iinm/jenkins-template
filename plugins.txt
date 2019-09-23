@@ -1,3 +1,5 @@
 matrix-auth
+credentials
+credentials-binding
 git
 simple-theme-plugin
