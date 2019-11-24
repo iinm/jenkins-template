@@ -2,5 +2,6 @@ matrix-auth
 credentials
 credentials-binding
 git
-simple-theme-plugin
 workflow-aggregator
+simple-theme-plugin
+ansicolor
