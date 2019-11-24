@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
 
-version        := 2.176.3
+version        := 2.190.3
 war_url        := http://mirrors.jenkins.io/war-stable/$(version)/jenkins.war
-war_sha256     := 9406c7bee2bc473f77191ace951993f89922f927a0cd7efb658a4247d67b9aa3
+war_sha256     := 79c2042b30ad71dc9cf17a5877f64eaed405fa03e24e002ca60f8db73b7ad490
 
 jenkins_home   ?= $(CURDIR)/jenkins_home
 listen_address ?= 127.0.0.1
@@ -26,7 +26,7 @@ validate-war: $(jenkins_war)
 	test `sha256sum $(jenkins_war) | cut -d ' ' -f 1` = $(war_sha256)
 
 .PHONY: run
-## run : run jenkins  e.g. make user=jenkins password=password run
+## run | run jenkins  e.g. make user=jenkins password=password run
 run: validate-war
 	mkdir -p $(jenkins_home)
 	cp init.groovy $(jenkins_home)
@@ -42,34 +42,37 @@ $(cli_jar):
 	curl -o $(cli_jar) $(url)/jnlpJars/jenkins-cli.jar
 
 .PHONY: reload
-## reload : reload jenkins
+## reload | reload jenkins
 reload: $(cli_jar)
 	@java -jar $(cli_jar) -s $(url) -auth $(cli_auth) reload-configuration
 
 .PHONY: safe-restart
-## safe-restart : restart jenkins
+## safe-restart | restart jenkins
 safe-restart: $(cli_jar)
 	@java -jar $(cli_jar) -s $(url) -auth $(cli_auth) safe-restart
 
 .PHONY: install-plugins
-## install-plugins : e.g. make plugin_list=plugins.txt install-plugins
+## install-plugins | e.g. make plugin_list=plugins.txt install-plugins
 install-plugins: $(cli_jar)
 	@for p in `cat $(plugin_list)`; do \
 	  java -jar $(cli_jar) -s $(url) -auth $(cli_auth) install-plugin $$p -deploy; \
 	done
 
 .PHONY: add-user
-## add-user : e.g. make new_user=jenkins new_password=password add-user
+## add-user | e.g. make new_user=jenkins new_password=password add-user
 add-user: $(cli_jar)
 	@echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount("$(new_user)", "$(new_password)")' \
 	  | java -jar $(cli_jar) -s $(url) -auth $(cli_auth) -noKeyAuth groovy = –
 
 .PHONY: cli-help
-## cli-help : show jenkins-cli help
+## cli-help | show jenkins-cli help
 cli-help: $(cli_jar)
 	@java -jar $(cli_jar) -s $(url) -auth $(cli_auth) help
 
 .PHONY: help
-## help : show help
+## help | show help
 help:
-	@grep -E '^##' $(MAKEFILE_LIST) | column -s ':' -t
+	@grep -E '^##' $(MAKEFILE_LIST) \
+		| sed -E 's,##\s*,,' \
+		| column -s '|' -t \
+		| sed -E "s,^([-_a-z0-9]+),$(shell tput setaf 6)\1$(shell tput sgr0),"

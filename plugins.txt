@@ -3,3 +3,4 @@ credentials
 credentials-binding
 git
 simple-theme-plugin
+workflow-aggregator
