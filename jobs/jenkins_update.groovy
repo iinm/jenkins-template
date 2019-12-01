@@ -55,7 +55,7 @@ pipeline {
 
         stage('Update jobs') {
             environment {
-                GIT_CREDENTIAL_ID = 'github-iinm'
+                GIT_CREDENTIAL_ID = 'github'
             }
             steps {
               sh 'bash ./update_jobs.sh'
