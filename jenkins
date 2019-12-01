@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: "${JENKINS_HOME:="$(pwd)/jenkins_home"}"
+: "${JENKINS_HOME_TEMPLATE:="$(pwd)/jenkins_home_template"}"
+: "${JENKINS_WAR:="$(pwd)/jenkins.war"}"
+: "${JENKINS_VERSION:=2.190.3}"
+: "${JENKINS_WAR_SHA256:=79c2042b30ad71dc9cf17a5877f64eaed405fa03e24e002ca60f8db73b7ad490}"
+: "${JENKINS_PORT:=8080}"
+: "${JENKINS_LISTEN_ADDRESS:=127.0.0.1}"
+: "${JENKINS_URL_PREFIX:=/jenkins}"
+: "${JENKINS_URL:="http://$JENKINS_LISTEN_ADDRESS:$JENKINS_PORT$JENKINS_URL_PREFIX"}"
+: "${JENKINS_ADMIN_USER_NAME:=admin}"
+: "${JENKINS_INITIAL_ADMIN_PASSWORD_FILE:="$(pwd)/.initial_admin_password"}"
+
+
+if test ! -f "$JENKINS_WAR"; then
+  echo "info: download jenkins.war"
+  wget -O "$JENKINS_WAR" "http://mirrors.jenkins.io/war-stable/$JENKINS_VERSION/jenkins.war"
+fi
+
+if test "$(sha256sum "$JENKINS_WAR" | awk '{ print $1 }')" != "${JENKINS_WAR_SHA256}"; then
+  echo >&2 "error: jenkins.war does not match checksum."
+  exit 1
+fi
+
+mkdir -p "$JENKINS_HOME"
+cp ./init.groovy "$JENKINS_HOME"
+
+exec env \
+  JENKINS_HOME="$JENKINS_HOME" \
+  JENKINS_URL="$JENKINS_URL" \
+  JENKINS_ADMIN_USER_NAME="$JENKINS_ADMIN_USER_NAME" \
+  JENKINS_INITIAL_ADMIN_PASSWORD_FILE="$JENKINS_INITIAL_ADMIN_PASSWORD_FILE" \
+  java \
+    -Djenkins.install.runSetupWizard=false \
+    -jar "$JENKINS_WAR" \
+    --httpPort="$JENKINS_PORT" \
+    --httpListenAddress="$JENKINS_LISTEN_ADDRESS" \
+    --prefix="$JENKINS_URL_PREFIX"

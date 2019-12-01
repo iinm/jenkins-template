@@ -1,3 +1,5 @@
 *.war
 *.jar
 /jenkins_home/
+/.initial_admin_password
+/.cli_credential

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eu
+
+: "${JENKINS_URL:="http://127.0.0.1:8080/jenkins"}"
+: "${JENKINS_CLI_JAR:="$(pwd)/jenkins-cli.jar"}"
+: "${JENKINS_CLI_CREDENTIAL_FILE:="$(pwd)/.cli_credential"}"
+
+
+if test ! -f "$JENKINS_CLI_JAR"; then
+  wget -q -O "$JENKINS_CLI_JAR" "$JENKINS_URL/jnlpJars/jenkins-cli.jar"
+fi
+
+exec java -jar "$JENKINS_CLI_JAR" -s "$JENKINS_URL" -auth @"$JENKINS_CLI_CREDENTIAL_FILE" "$@"
