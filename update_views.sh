@@ -2,7 +2,9 @@
 
 set -eu
 
-for view_dir in ./views/*; do
+: "${VIEW_DIR:="./views"}"
+
+for view_dir in "$VIEW_DIR"/*; do
   view_name=$(basename "$view_dir")
   echo "--- Update view $view_name"
 
@@ -15,7 +17,7 @@ for view_dir in ./views/*; do
   fi
 
   for script in "$view_dir"/*.groovy; do
-    job_name=$(basename "$script" | sed s/.groovy$//)
+    job_name=$(basename "$script" | sed 's/.groovy$//')
     echo "add job to view.  view=$view_name job=$job_name"
     ./jenkins-cli add-job-to-view "$view_name" "$job_name"
   done

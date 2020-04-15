@@ -5,8 +5,8 @@ set -eu
 : "${JENKINS_HOME:="$(pwd)/jenkins_home"}"
 : "${JENKINS_HOME_TEMPLATE:="$(pwd)/jenkins_home_template"}"
 : "${JENKINS_WAR:="$(pwd)/jenkins.war"}"
-: "${JENKINS_VERSION:=2.190.3}"
-: "${JENKINS_WAR_SHA256:=79c2042b30ad71dc9cf17a5877f64eaed405fa03e24e002ca60f8db73b7ad490}"
+: "${JENKINS_VERSION:=2.222.1}"
+: "${JENKINS_WAR_SHA256:=5a6cbb836ceb79728c2d9f72645d0680f789cdb09a44485076aba6143bea953e}"
 : "${JENKINS_PORT:=8080}"
 : "${JENKINS_LISTEN_ADDRESS:=127.0.0.1}"
 : "${JENKINS_URL_PREFIX:=/jenkins}"
@@ -26,7 +26,7 @@ if test "$(sha256sum "$JENKINS_WAR" | awk '{ print $1 }')" != "${JENKINS_WAR_SHA
 fi
 
 mkdir -p "$JENKINS_HOME"
-cp ./init.groovy "$JENKINS_HOME"
+cp "$(pwd)/init.groovy" "$JENKINS_HOME"
 
 exec env \
   JENKINS_HOME="$JENKINS_HOME" \
