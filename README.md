@@ -15,22 +15,20 @@ The Purpose of this project is managing Jenkins job configuration as code and au
   **All pipeline must check `JUST_UPDATE_JENKINSFILE` parameter to prevent execution.  For more detail, see example `hello_pipeline.groovy`.**
 - It does not support deletion of Job and View.
 
-## Directory structure
+## Example Directory structure
 
 ```
-.
-├── jobs
-│   ├── hello_pipeline.groovy  # Example pipeline script
-│   └── jenkins_update.groovy  # This pipeline deploys Jenkins jobs
-└── views
-    ├── example
-    │   └── hello_pipeline.groovy -> ../../jobs/hello_pipeline.groovy
-    └── jenkins
-        └── jenkins_update.groovy -> ../../jobs/jenkins_update.groovy
+jobs
+├── hello.groovy
+└── update_jenkins_jobs.groovy
+views
+└── example
+    ├── hello.groovy -> ../../jobs/hello.groovy
+    └── update_jenkins_jobs.groovy -> ../../jobs/update_jenkins_jobs.groovy
 ```
 - `jobs`  : Pipeline script
 - `views` : View definition.  Sub directory should contains only symbolic link to pipeline script.
-  e.g. sub directory `example` above is view that contains job `hello_pipeline`.
+  e.g. sub directory `example` above is view that contains job `hello`.
 
 
 ## Bootstrap
@@ -58,15 +56,15 @@ while read line; do ./jenkins-cli install-plugin "$line" -deploy < /dev/null; do
 
 Add Credentials
 - Jenkins username / password (id: jenkins-cli) : Required to Update jobs and views using Jenkins itself.
-- Github username / access token (id: github) : Required to pull git repository that contains jobs.
+- Git username / password token (id: jenkins-git) : Required to pull git repository that contains jobs.
 
 Update Jobs
 ```sh
-env GIT_CREDENTIAL_ID="github" bash ./update_jobs.sh
+env GIT_CREDENTIAL_ID="jenkins-git" JOB_DIR=./jobs bash ./update_jobs.sh
 ```
 - GIT_CREDENTIAL_ID : Jenkins credential ID to access git repository.
 
 Update Views
 ```sh
-bash ./update_views.sh
+env VIEW_DIR=./views bash ./update_views.sh
 ```

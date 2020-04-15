@@ -2,15 +2,11 @@ pipeline {
     agent any
 
     options {
+        disableConcurrentBuilds()
         ansiColor('xterm')
     }
 
-    triggers { pollSCM 'H/2 * * * *' }
-
-    environment {
-        JENKINS_URL = 'http://127.0.0.1:8080/jenkins'
-        JENKINS_CLI_CREDENTIAL = credentials('jenkins-cli')
-    }
+    triggers { pollSCM 'H/3 * * * *' }
 
     parameters {
         string(name: 'GIT_BRANCH', defaultValue: 'develop', description: '')
@@ -36,6 +32,9 @@ pipeline {
         }
 
         stage("Prepare Jenkins cli credential file") {
+            environment {
+                JENKINS_CLI_CREDENTIAL = credentials('jenkins-cli')
+            }
             steps {
                 sh 'echo "$JENKINS_CLI_CREDENTIAL" > .cli_credential'
             }
@@ -49,13 +48,13 @@ pipeline {
 
         stage('Lint') {
             steps {
-                sh 'make lint'
+                sh 'make lint-sh lint-groovy'
             }
         }
 
         stage('Update jobs') {
             environment {
-                GIT_CREDENTIAL_ID = 'github'
+                GIT_CREDENTIAL_ID = 'jenkins-git'
             }
             steps {
               sh 'bash ./update_jobs.sh'

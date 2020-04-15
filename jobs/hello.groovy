@@ -28,4 +28,16 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            script {
+                if (params.JUST_RELOAD_JENKINSFILE) {
+                    return
+                }
+                echo "Don't forget to check 'JUST_RELOAD_JENKINSFILE' parameter."
+            }
+        }
+    }
+
 }
