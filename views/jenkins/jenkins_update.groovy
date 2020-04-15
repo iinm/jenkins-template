@@ -1,1 +1,0 @@
-../../jobs/jenkins_update.groovy
