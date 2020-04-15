@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     options {
+        disableConcurrentBuilds()
         ansiColor('xterm')
     }
 
-    triggers { pollSCM 'H/2 * * * *' }
+    triggers { pollSCM 'H/3 * * * *' }
 
     parameters {
         string(name: 'GIT_BRANCH', defaultValue: 'develop', description: '')
